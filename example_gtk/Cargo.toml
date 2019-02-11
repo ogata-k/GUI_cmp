@@ -1,0 +1,7 @@
+[package]
+name = "example_gtk"
+version = "0.1.0"
+authors = ["ogata-k <ogtkzk712@gmail.com>"]
+edition = "2018"
+
+[dependencies]
