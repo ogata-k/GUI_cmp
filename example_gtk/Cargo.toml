@@ -5,3 +5,8 @@ authors = ["ogata-k <ogtkzk712@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+gtk = 0.5.0
+
+[dependencies.gtk]
+version = "0.5.0"
+features = ["v3_10"]
