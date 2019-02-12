@@ -7,6 +7,6 @@ RustでGUIを作成しようにも良さげなクレートでこれだという�
 今回使用するバージョンは```0.5.0```です。
 ## どんなクレートか
 [gtk](https://github.com/gtk-rs/gtk)はGTK+ 3とCairo、GtkSourceView、そしてGLibの互換性のあるライブラリ（つまり[cairo-rs](https://crates.io/crates/cairo-rs), [gdk](https://crates.io/crates/gdk), [gdk-pixbuf](https://crates.io/crates/gdk-pixbuf),[gio](https://crates.io/crates/gio), [glib](https://crates.io/crates/glib), [gtk](https://crates.io/crates/gtk), [pango](https://crates.io/crates/pango), [sourceview](https://crates.io/crates/sourceview)）を結びつけるためのクレートです。
-このgtkクレートはOSにGTK+とGLibとCairoをインストールされていることを要求するので注意が必要です。
+このgtkクレートはOSに[GTK+とGLibとCairoをインストール](https://gtk-rs.org/docs-src/requirements.html)されていることを要求するので注意が必要です。
 ## コード
 % TODO 作成してからここに貼り付ける。
