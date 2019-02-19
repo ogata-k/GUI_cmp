@@ -34,7 +34,10 @@ fn main(){
     Inhibit(false)
   });
 
-  button.connect_clicked(|_| {
+  let label_c = label.clone();
+  button.connect_clicked(move |_| {
+    let old_num: u16 = label_c.get_text().unwrap().to_string().parse::<u16>().unwrap();
+    label.set_text(&(old_num + 1).to_string());
     println!("カウント+1");
   });
 
