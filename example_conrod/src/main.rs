@@ -40,14 +40,13 @@ fn main() {
     // construct our `Ui`.
     let mut ui = conrod::UiBuilder::new([width as f64, height as f64]).build();
 
-    /*
     // Add a `Font` to the `Ui`'s `font::Map` from file.
     let assets = find_folder::Search::KidsThenParents(3, 5)
         .for_folder("assets")
         .unwrap();
     let font_path = assets.join("fonts/NotoSans/NotoSans-Regular.ttf");
     ui.fonts.insert_from_file(font_path).unwrap();
-*/
+
     // Generate the widget identifiers.
     let ids = &mut Ids::new(ui.widget_id_generator());
 
