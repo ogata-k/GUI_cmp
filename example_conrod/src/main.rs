@@ -6,13 +6,13 @@ use conrod::{widget, color, Colorable, Borderable, Sizeable, Positionable, Label
 use conrod::backend::glium::glium;
 use conrod::backend::glium::glium::{DisplayBuild, Surface};
 
+// 使用するid一覧
 widget_ids!(
     struct Ids {
         canvas,
         title,
-        text_box,
+        num_lbl,
         button,
-        result,
     });
 
 fn fib(x: u64) -> u64 {
@@ -24,32 +24,31 @@ fn fib(x: u64) -> u64 {
 }
 
 fn main() {
-    const TITLE: &'static str = "Fibonacci";
-    let width = 300;
-    let height = 100;
+  // 設定値
+    const TITLE: &'static str = "カウントアップ";
+    let width = 400;
+    let height = 300;
 
-    // Build the window.
+    // windowの作成
     let display = glium::glutin::WindowBuilder::new()
-        .with_vsync()
         .with_dimensions(width, height)
         .with_title(TITLE)
-        .with_multisampling(4)
-        .build_glium()
+        .build_glium()  // windowの構築
         .unwrap();
 
-    // construct our `Ui`.
+    // Uiの作成
     let mut ui = conrod::UiBuilder::new([width as f64, height as f64]).build();
 
-    // Add a `Font` to the `Ui`'s `font::Map` from file.
+    // Uiで使うFontをassets以下のファイルからfont::Mapに追加
     let assets = find_folder::Search::KidsThenParents(3, 5)
         .for_folder("assets")
         .unwrap();
     let font_path = assets.join("fonts/NotoSans/NotoSans-Regular.ttf");
     ui.fonts.insert_from_file(font_path).unwrap();
 
-    // Generate the widget identifiers.
+    // idを管理するための管理者の作成
     let ids = &mut Ids::new(ui.widget_id_generator());
-
+////////////////////////////////////////////////////編集ここまで
     // A type used for converting `conrod::render::Primitives` into `Command`s that can be used
     // for drawing to the glium `Surface`.
     let mut renderer = conrod::backend::glium::Renderer::new(&display).unwrap();
@@ -57,8 +56,7 @@ fn main() {
     // The image map describing each of our widget->image mappings (in our case, none).
     let image_map = conrod::image::Map::<glium::texture::Texture2d>::new();
 
-    let mut text = "0".to_string();
-    let mut answer = "0".to_string();
+    let mut num = "0".to_string();
 
     // Poll events from the window.
     let mut event_loop = EventLoop::new();
@@ -83,7 +81,7 @@ fn main() {
             }
         }
 
-        set_widgets(ui.set_widgets(), ids, &mut text, &mut answer);
+        set_widgets(ui.set_widgets(), ids, &mut num);
 
         // Render the `Ui` and then display it on the screen.
         if let Some(primitives) = ui.draw_if_changed() {
@@ -96,60 +94,48 @@ fn main() {
     }
 }
 
-fn set_widgets(ref mut ui: conrod::UiCell, ids: &mut Ids, text: &mut String, answer: &mut String) {
+// 配置するwidgetの配置方法の指定関数
+fn set_widgets(ref mut ui: conrod::UiCell, ids: &mut Ids, num: &mut String) {
+  // 背景(canvas)
     widget::Canvas::new()
         .pad(0.0)
         .color(conrod::color::rgb(0.2, 0.35, 0.45))
         .set(ids.canvas, ui);
 
+    // canvasのidを使い指定することでuiからcanvasの横と縦の配列を取得
     let canvas_wh = ui.wh_of(ids.canvas).unwrap();
 
-    // title
-    widget::Text::new("Fibonacci Calculuator")
+    // タイトル 
+    widget::Text::new("カウントアップ！！")
         .mid_top_with_margin_on(ids.canvas, 5.0)
-        .font_size(20)
-        .color(color::WHITE)
+        .font_size(20)  // フォントのサイズを指定！！
+        .color(color::WHITE)  // 色の指定も簡単にできる
         .set(ids.title, ui);
 
-    // textbox
-    for event in widget::TextBox::new(text)
-        .font_size(15)
-        .w_h((canvas_wh[0] - 90.) / 2., 30.0)
-        .mid_left_with_margin_on(ids.canvas, 30.0)
-        .border(2.0)
-        .border_color(color::BLUE)
+    // 数値の表示
+    widget::Text::new(num)
+        .mid_top_with_margin_on(ids.canvas, 10.0)
+        .font_size(20)
         .color(color::WHITE)
-        .set(ids.text_box, ui)
-    {
-        match event {
-            widget::text_box::Event::Enter => println!("TextBox {:?}", text),
-            widget::text_box::Event::Update(string) => *text = string,
-        }
-    }
+        .set(ids.num_lbl, ui);
 
-    // button
+    // カウントボタン
     if widget::Button::new()
-        .w_h((canvas_wh[0] - 90.) / 2., 30.0)
-        .right_from(ids.text_box, 30.0)
-        .rgb(0.4, 0.75, 0.6)
-        .border(2.0)
-        .label("calc!")
+        .w_h((canvas_wh[0] - 90.) / 2., 30.0)  // 幅
+        .left_from(ids.num_lbl, 10.0)// 位置
+        .rgb(0.4, 0.75, 0.6)  // 色
+        .border(2.0)  // 境界
+        .label("カウント+1")
         .set(ids.button, ui)
         .was_clicked()
-    {
-        if let Ok(num) = text.parse::<u64>() {
-            *answer = fib(num).to_string();
+    {  // if式の実行部分
+        if let Ok(count) = num.parse::<u32>() {
+            *num = (count+1).to_string();
         } else {
             println!("invalid number");
         }
     }
 
-    // result
-    widget::Text::new(answer)
-        .mid_bottom_with_margin_on(ids.canvas, 10.0)
-        .font_size(20)
-        .color(color::WHITE)
-        .set(ids.result, ui);
 }
 
 struct EventLoop {
