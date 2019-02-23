@@ -1,0 +1,12 @@
+[package]
+name = "example_conrod"
+version = "0.1.0"
+authors = ["ogata-k <ogtkzk712@gmail.com>"]
+edition = "2018"
+
+[dependencies.conrod]
+version = "0.53.0"
+features = ["glium", "winit"]
+
+[dependencies]
+find_folder = "*"
