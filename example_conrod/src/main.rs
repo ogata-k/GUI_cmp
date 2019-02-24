@@ -99,15 +99,15 @@ fn set_widgets(ref mut ui: conrod::UiCell, ids: &mut Ids, num: &mut String) {
 
     // 数値の表示
     widget::Text::new(num)
-        .mid_top_with_margin_on(ids.canvas, 10.0)
-        .font_size(20)  // フォントのサイズを指定！！
+        .middle_of(ids.canvas)
+        .font_size(140)  // フォントのサイズを指定！！
         .color(color::WHITE)  // 色の指定も簡単にできる
         .set(ids.num_lbl, ui);
 
     // カウントボタン
     if widget::Button::new()
-        .w_h((canvas_wh[0] - 90.) / 2., 30.0)  // 幅
-        .left_from(ids.num_lbl, 10.0)// 位置
+        .w_h(canvas_wh[0] - 10.0, 40.0)  // 幅
+        .mid_bottom_with_margin_on(ids.canvas, 5.0)// 位置
         .rgb(0.4, 0.75, 0.6)  // 色
         .border(2.0)  // 境界
         .label("count +1")
