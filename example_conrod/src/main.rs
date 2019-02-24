@@ -15,14 +15,6 @@ widget_ids!(
         button,
     });
 
-fn fib(x: u64) -> u64 {
-    match x {
-        0 => 0,
-        1 => 1,
-        n => fib(n - 1) + fib(n - 2),
-    }
-}
-
 fn main() {
   // 設定値
     const TITLE: &'static str = "カウントアップ";
