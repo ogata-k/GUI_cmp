@@ -40,29 +40,26 @@ fn main() {
 
     // idを管理するための管理者の作成
     let ids = &mut Ids::new(ui.widget_id_generator());
-////////////////////////////////////////////////////編集ここまで
-    // A type used for converting `conrod::render::Primitives` into `Command`s that can be used
-    // for drawing to the glium `Surface`.
+
+    // gliumで描画するためのrendererの準備
     let mut renderer = conrod::backend::glium::Renderer::new(&display).unwrap();
 
-    // The image map describing each of our widget->image mappings (in our case, none).
+    // The widgetとimageを結びつけて管理するmapping
     let image_map = conrod::image::Map::<glium::texture::Texture2d>::new();
 
-    let mut num = "0".to_string();
 
-    // Poll events from the window.
     let mut event_loop = EventLoop::new();
+    // windowのイベントループ
     'main: loop {
-        // Handle all events.
         for event in event_loop.next(&display) {
-            // Use the `winit` backend feature to convert the winit event to a conrod one.
+            // windowのイベントのハンドラーをセット
             if let Some(event) = conrod::backend::winit::convert(event.clone(), &display) {
                 ui.handle_event(event);
                 event_loop.needs_update();
             }
 
             match event {
-                // Break from the loop upon `Escape`.
+                // Escapeはwindowの削除用に
                 glium::glutin::Event::KeyboardInput(
                     _,
                     _,
@@ -73,9 +70,11 @@ fn main() {
             }
         }
 
+
+        let mut num = "0".to_string();
         set_widgets(ui.set_widgets(), ids, &mut num);
 
-        // Render the `Ui` and then display it on the screen.
+        // Uiの描画とその表示
         if let Some(primitives) = ui.draw_if_changed() {
             renderer.fill(&display, primitives, &image_map);
             let mut target = display.draw();
