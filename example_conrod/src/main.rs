@@ -10,7 +10,6 @@ use conrod::backend::glium::glium::{DisplayBuild, Surface};
 widget_ids!(
     struct Ids {
         canvas,
-        title,
         num_lbl,
         button,
     });
@@ -48,11 +47,13 @@ fn main() {
     let image_map = conrod::image::Map::<glium::texture::Texture2d>::new();
 
 
+    let mut num = "0".to_string();
+
     let mut event_loop = EventLoop::new();
     // windowのイベントループ
     'main: loop {
         for event in event_loop.next(&display) {
-            // windowのイベントのハンドラーをセット
+            // windowのイベントのハンドラーをuiにセット
             if let Some(event) = conrod::backend::winit::convert(event.clone(), &display) {
                 ui.handle_event(event);
                 event_loop.needs_update();
@@ -71,7 +72,6 @@ fn main() {
         }
 
 
-        let mut num = "0".to_string();
         set_widgets(ui.set_widgets(), ids, &mut num);
 
         // Uiの描画とその表示
@@ -96,18 +96,12 @@ fn set_widgets(ref mut ui: conrod::UiCell, ids: &mut Ids, num: &mut String) {
     // canvasのidを使い指定することでuiからcanvasの横と縦の配列を取得
     let canvas_wh = ui.wh_of(ids.canvas).unwrap();
 
-    // タイトル 
-    widget::Text::new("カウントアップ！！")
-        .mid_top_with_margin_on(ids.canvas, 5.0)
-        .font_size(20)  // フォントのサイズを指定！！
-        .color(color::WHITE)  // 色の指定も簡単にできる
-        .set(ids.title, ui);
 
     // 数値の表示
     widget::Text::new(num)
         .mid_top_with_margin_on(ids.canvas, 10.0)
-        .font_size(20)
-        .color(color::WHITE)
+        .font_size(20)  // フォントのサイズを指定！！
+        .color(color::WHITE)  // 色の指定も簡単にできる
         .set(ids.num_lbl, ui);
 
     // カウントボタン
@@ -116,7 +110,7 @@ fn set_widgets(ref mut ui: conrod::UiCell, ids: &mut Ids, num: &mut String) {
         .left_from(ids.num_lbl, 10.0)// 位置
         .rgb(0.4, 0.75, 0.6)  // 色
         .border(2.0)  // 境界
-        .label("カウント+1")
+        .label("count +1")
         .set(ids.button, ui)
         .was_clicked()
     {  // if式の実行部分
