@@ -1,0 +1,8 @@
+[package]
+name = "example_azul"
+version = "0.1.0"
+authors = ["ogata-k <ogtkzk712@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+azul = {git = "https://github.com/maps4print/azul"}
