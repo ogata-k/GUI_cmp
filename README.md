@@ -10,7 +10,8 @@ Azul(version ```0.1.0```)はRust```1.28```以降をサポートしているの�
 AzulはHTMLのようなDOMスタイルを使いウィジェットの構造を表し、(Azul用の)CSSでレイアウトに対処するという形を取っています。
 詳しくはAzulの[Tutorial(英語)](https://github.com/maps4print/azul/wiki)や[公式サイト](https://azul.rs/)を参照してみてください。
 ## 基本的なコード
-``` style.css
+``` 
+// style.css
 #label{
   color: black;
   font-size: 60px;
@@ -22,7 +23,8 @@ AzulはHTMLのようなDOMスタイルを使いウィジェットの構造を表
 }
 ```
 
-``` main.rs
+```
+// main.rs
 extern crate azul;
 
 use azul::{prelude::*, widgets::{label::Label, button::Button}};
