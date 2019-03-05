@@ -3,7 +3,88 @@ RustでGUIを作成しようにも良さげなクレートでこれだという�
 ここではそれぞれのライブラリでボタンを押すと数字が増える"カウントアップ"というGUIを作っていきます。
 コードなどの確認は[こちら](https://github.com/ogata-k/GUI_cmp)を確認してください。
 
----
+# azul
+Azul(version ```0.1.0```)はRust```1.28```以降をサポートしているので、```rustc -vV```であなたのRustコンパイラのバージョンがサポートされているか確認してください。
+## どんなクレートか
+[azul](https://github.com/maps4print/azul)はMozillaのブラウザーのレンダリングエンジンを元にRustで書かれているIMGUI指向の(つまり"Immediate Mode GUI"と呼ばれるパラダイムを採用した)GUIフレームワークです。IMGUI指向を簡単にいうと"要求されたときに要求されたことだけを処理する"といった感じ(間違っているかも)になります。
+AzulはHTMLのようなDOMスタイルを使いウィジェットの構造を表し、(Azul用の)CSSでレイアウトに対処するという形を取っています。
+詳しくはAzulの[Tutorial(英語)](https://github.com/maps4print/azul/wiki)や[公式サイト](https://azul.rs/)を参照してみてください。
+## 基本的なコード
+``` 
+// style.css
+#label{
+  color: black;
+  font-size: 60px;
+}
+
+#button{
+  font-size: 10px;
+  padding: 5px;
+}
+```
+
+```
+// main.rs
+extern crate azul;
+
+use azul::{prelude::*, widgets::{label::Label, button::Button}};
+use azul::window_state::WindowSize;
+// レイアウトに依存するデータモデルの定義
+struct DataModel {
+  count_num: usize,
+}
+
+// レイアウトの実装
+impl Layout for DataModel {
+  // render関数
+  fn layout(&self, info: LayoutInfo<Self>) -> Dom<Self> {
+    // domでビルドするビルダーパターンのイメージでwidgetの作成
+    let label = Label::new(format!("{}", self.count_num)).dom().with_id("label");
+    // domにしてから関数を設定
+    let button = Button::with_label("カウントアップ +1").dom().with_id("button")
+      .with_callback(On::MouseUp, Callback(update_counter));
+
+    // HTMLのような感じでレイアウトの部品となるDomを返す
+    Dom::new(NodeType::Div)
+      .with_child(label)
+      .with_child(button)
+  }
+}
+
+
+// appの情報とイベントの情報を受け取って計算したあとにスクリーンに状態を伝搬する関数
+fn update_counter(app_state: &mut AppState<DataModel>, _event: &mut CallbackInfo<DataModel>) -> UpdateScreen {
+  app_state.data.modify(|state| state.count_num += 1);
+  // 再描画の必要が無いときはRedrawの代わりにDontRedrawを使う
+  Redraw
+}
+
+fn main() {
+  // GUIのルートの作成
+  // 引数はレイアウトを決定する初期条件とログやエラー処理に関するデータ構造
+  let app = App::new(DataModel {count_num: 0}, AppConfig::default());
+
+  // Windowの設定
+  let mut window_options = WindowCreateOptions::default();
+  window_options.state.title = "カウントアップ".to_string();
+  let mut window_size = WindowSize::default();
+  window_size.dimensions = LogicalSize::new(400.0, 300.0);  // width * height
+  window_options.state.size = window_size;
+
+  // CSSの設定
+  macro_rules! CSS_PATH { () => (concat!(env!("CARGO_MANIFEST_DIR"), "/src/style.css")) }
+  let css = css::override_native(include_str!(CSS_PATH!())).expect(&format!("failed: override CSS by {}", CSS_PATH!()));
+
+  app.run(Window::new(window_options, css).expect("failed: make window")).expect("failed: start running application");
+}
+```
+## 所感
+コンパイルは重い。そしてまだまだ発展途中ではある。また、ウィンドウのサイズやマウスの設定は構造体で与えてやる必要があるが、それ以外のレイアウトに関する情報は大体CSSで記述できる。このCSSで記述するというのはIMGUI指向のレイアウトを複雑にしにくいというのを解決してくれるように感じる。しかし個人的にうまく機能してくれなかった。（適用するための情報を求む）
+Windowの細かい設定もしやすいのも特徴である。もちろんDefaultトレイトも実装されている。そのためデフォルトの一部を変えた設定を使うことも容易である。しかし設定できることが多い為、ものによっては設定するためのコードのネストが深くなってしまう。set〇〇のようなメソッドがほしいところ。
+## 総評
+まだまだ未熟な点が多く、ドキュメントもほとんど無いため実用には程遠く感じる。しかし、IMGUI指向のCSSでレイアウトが強化されたDOM型GUIライブラリは使いやすく感じるのでversion```1.0.0```を超えての安定バージョンを期待したいところ。
+## ひとこと
+まだまだ未熟だが、CSSでレイアウトを強化されたIMGUI指向のDOM型GUIライブラリ。
 
 # conrod
 今回は[こちら](http://mmi.hatenablog.com/entry/2017/07/09/234945)を参考にしてそこに[挙げられている例](https://github.com/mmisono/conrod-examples/tree/master/fibonacci)の指定の通りのバージョン```0.53.0```を使用している。
@@ -195,8 +276,6 @@ assetsからフォントを引っ張ってきたりして、何かしらのフ�
 まだまだチュートリアルなどの情報が少なく調べにくいが、ラベルのサイズや色の変更が簡単で細かく装飾したい人には良さそうなクレートだと思われる。しかし、Idでの管理の面倒臭さやレイアウト、データと処理の分離がまだまだだと思われる。
 ## ひとこと
 装飾は強いがレイアウトが弱い。
-
----
 
 # gtk
 今回使用するバージョンは```0.5.0```です。
