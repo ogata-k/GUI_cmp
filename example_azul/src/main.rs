@@ -12,9 +12,9 @@ impl Layout for DataModel {
   // render関数
   fn layout(&self, info: LayoutInfo<Self>) -> Dom<Self> {
     // domでビルドするビルダーパターンのイメージでwidgetの作成
-    let label = Label::new(format!("{}", self.count_num)).dom().with_id("my_label");
+    let label = Label::new(format!("{}", self.count_num)).dom().with_id("label");
     // domにしてから関数を設定
-    let button = Button::with_label("カウントアップ +1").dom().with_id("my_button")
+    let button = Button::with_label("カウントアップ +1").dom().with_id("button")
       .with_callback(On::MouseUp, Callback(update_counter));
 
     // HTMLのような感じでレイアウトの部品となるDomを返す
@@ -46,7 +46,7 @@ fn main() {
 
   // CSSの設定
   macro_rules! CSS_PATH { () => (concat!(env!("CARGO_MANIFEST_DIR"), "/src/style.css")) }
-
   let css = css::override_native(include_str!(CSS_PATH!())).expect(&format!("failed: override CSS by {}", CSS_PATH!()));
+
   app.run(Window::new(window_options, css).expect("failed: make window")).expect("failed: start running application");
 }
