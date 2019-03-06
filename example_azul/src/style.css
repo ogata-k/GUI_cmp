@@ -1,9 +1,15 @@
 #label{
   color: black;
-  font-size: 60px;
+  font-size: 160px;
+  background-color: yellow;
 }
 
 #button{
   font-size: 10px;
-  padding: 5px;
+  margin: 5px;
+  background-color: blue;
+}
+
+* {
+  font-size: 27px;
 }
